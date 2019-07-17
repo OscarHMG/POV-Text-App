@@ -10,15 +10,17 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private Pixel p1, p2, p3,p4, p5, p6, p7, p8;
-    int A[] = {1,1,1,1,1,1,1,1, 1,0,0,1,0,0,0,0, 1,0,0,1,0,0,0,0, 1,0,0,1,0,0,0,0, 1,1,1,1,1,1,1,1};
     Pixel [] pixels;
     int letterSpace = 6;
-    int dotTime = 5;
+    int dotTime = 2500;
 
-    static int cont = 0;
+    static int cont = 0, index = 0;
     private Timer timer;
     private TimerTask timerTask;
     private Handler handler = new Handler();
+    private boolean firstTime = true;
+    String pov_text = "OSC";
+    int result[] = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,32 +79,49 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     public void run(){
                         int y;
-                        // printing the first y row of the letter
 
 
-                        if(cont > 33) {
-                            for (y=0; y<8; y++){
+                        if (cont > 33) {
+                            for (y = 0; y < 8; y++) {
 
                                 pixels[y].setOn(0);
                             }
-                            //Log.i("OSCAR", "1 time finish");
+
                             cont = 0;
-                        }else{
-                            for (y=0; y<8; y++){
-                                //digitalWrite(y+2, A[y]);
-                                pixels[y].setOn(A[y + cont]);
+
+                            Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(index));
+
+                            //Aqui termina una letra completa, voy a la siguiente letra. Pero pregunto primero si
+                            //alcance el limite de la cadena de texto
 
 
-                                //Log.i("OSCAR", "FOR time; " + (cont + y));
-
+                            if (index == pov_text.length() - 1) {
+                                index = 0;
+                                Log.i("OSCAR", "TERMINE TODA LA PALABRA");
+                            } else {
+                                index = index + 1;
                             }
+
+
+                            result = LEDPattern.getPatternLetter(pov_text.charAt(index));
+
+                        } else {
+                            //PARCHE: Solo entrara la primera vez que inice el juego con el texto.
+                            if (firstTime) {
+                                result = LEDPattern.getPatternLetter(pov_text.charAt(index));
+                                firstTime = false;
+                            }
+
+                            for (y = 0; y < 8; y++) {
+                                pixels[y].setOn(result[y + cont]);
+                            }
+
+                            cont = cont + 8;
+
+                            Log.i("OSCAR", "TERMINE PATRON: DEL " + cont);
 
                         }
 
-                        cont = cont + 8;
-
-
-                        Log.i("OSCAR", "1 time --> " + cont);
                     }
                 });
             }
