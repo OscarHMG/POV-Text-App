@@ -4,54 +4,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/containerPixel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_1"
             android:layout_marginBottom="5dp"
-            android:layout_width="25dp"
-            android:layout_height="25dp" />
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_2"
             android:layout_marginBottom="5dp"
-            android:layout_width="25dp"
-            android:layout_height="25dp" />
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_3"
             android:layout_marginBottom="5dp"
-            android:layout_width="25dp"
-            android:layout_height="25dp" />
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_4"
-            android:layout_width="25dp"
+            android:layout_width="15dp"
             android:layout_marginBottom="5dp"
-            android:layout_height="25dp" />
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_5"
-            android:layout_width="25dp"
+            android:layout_width="15dp"
             android:layout_marginBottom="5dp"
-            android:layout_height="25dp" />
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_6"
-            android:layout_width="25dp"
+            android:layout_width="15dp"
             android:layout_marginBottom="5dp"
-            android:layout_height="25dp" />
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_7"
             android:layout_marginBottom="5dp"
-            android:layout_width="25dp"
-            android:layout_height="25dp" />
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
         <com.rayzem.pov_text.Pixel
             android:id="@+id/led_8"
-            android:layout_width="25dp"
-            android:layout_height="25dp" />
+            android:layout_width="15dp"
+            android:layout_height="15dp" />
 
     </LinearLayout>
 

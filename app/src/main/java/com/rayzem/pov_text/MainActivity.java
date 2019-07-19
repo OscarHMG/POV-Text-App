@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     private Pixel p1, p2, p3,p4, p5, p6, p7, p8;
     Pixel [] pixels;
     int letterSpace = 6;
-    int dotTime = 2500;
+    int dotTime = 1;
 
     static int cont = 0, index = 0;
     private Timer timer;
