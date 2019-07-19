@@ -27,7 +27,7 @@ public class Pixel extends View {
         if(this.on == 1){
             canvas.drawColor(ContextCompat.getColor(getContext(),R.color.red));
         }else{
-            canvas.drawColor(ContextCompat.getColor(getContext(),R.color.dark_red));
+            canvas.drawColor(ContextCompat.getColor(getContext(), android.R.color.black));
         }
 
     }
