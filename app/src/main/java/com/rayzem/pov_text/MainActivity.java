@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -20,12 +18,15 @@ public class MainActivity extends AppCompatActivity {
     int letterSpace = 6;
     long dotTime = 1;
 
-    static int cont = 0, index = 0;
+    static int cont = 0, indexChar = 0, contNumWordTimes = 0, indexWord = 0;
     private Timer timer;
     private TimerTask timerTask;
     private Handler handler = new Handler();
     private boolean firstTime = true;
-    String pov_text = "OSC";
+    String word = "HELLO WORLD";
+    String pov_text = "";
+    String[] splitted_pov_text;
+
     int result[] = null;
 
     ScheduledExecutorService exec;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
+        splitted_pov_text = word.split("\\s+");
 
 
         initUI();
@@ -74,12 +76,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startTimer();
+        //startTimerPool();
+        //arduinoCode();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //stopTimer();
+
+
     }
 
     private void stopTimer(){
@@ -90,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void startTimer(){
+    private void startTimerPool(){
 
         //timer = new Timer();
         timerTask = new TimerTask() {
@@ -109,32 +115,39 @@ public class MainActivity extends AppCompatActivity {
 
                             cont = 0;
 
-                            Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(index));
+                            Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(indexChar));
 
                             //Aqui termina una letra completa, voy a la siguiente letra. Pero pregunto primero si
                             //alcance el limite de la cadena de texto
 
-                            try {
-                                Thread.sleep(6);
+
+                            /*try {
+                                Thread.sleep(1);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
-                            }
+                            }*/
 
 
-                            if (index == pov_text.length() - 1) {
-                                index = 0;
+
+                            if (indexChar == pov_text.length() - 1) {
+                                indexChar = 0;
                                 Log.i("OSCAR", "TERMINE TODA LA PALABRA");
+                                try {
+                                    Thread.sleep(6);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             } else {
-                                index = index + 1;
+                                indexChar = indexChar + 1;
                             }
 
 
-                            result = LEDPattern.getPatternLetter(pov_text.charAt(index));
+                            result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
 
                         } else {
                             //PARCHE: Solo entrara la primera vez que inice el juego con el texto.
                             if (firstTime) {
-                                result = LEDPattern.getPatternLetter(pov_text.charAt(index));
+                                result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
                                 firstTime = false;
                             }
 
@@ -161,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         exec = new ScheduledThreadPoolExecutor(1);
         //exec.scheduleAtFixedRate(timerTask, 0, 1, TimeUnit.MILLISECONDS);
 
-        exec.scheduleAtFixedRate(timerTask, 10000000, 1, TimeUnit.MICROSECONDS);
+        exec.scheduleAtFixedRate(timerTask, 0, 1, TimeUnit.MILLISECONDS);
 
        /* exec = new ScheduledThreadPoolExecutor(1);
         exec.scheduleAtFixedRate(new Runnable() {
@@ -181,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
                             cont = 0;
 
-                            Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(index));
+                            Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(indexChar));
 
                             //Aqui termina una letra completa, voy a la siguiente letra. Pero pregunto primero si
                             //alcance el limite de la cadena de texto
@@ -193,20 +206,20 @@ public class MainActivity extends AppCompatActivity {
                             }
 
 
-                            if (index == pov_text.length() - 1) {
-                                index = 0;
+                            if (indexChar == pov_text.length() - 1) {
+                                indexChar = 0;
                                 Log.i("OSCAR", "TERMINE TODA LA PALABRA");
                             } else {
-                                index = index + 1;
+                                indexChar = indexChar + 1;
                             }
 
 
-                            result = LEDPattern.getPatternLetter(pov_text.charAt(index));
+                            result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
 
                         } else {
                             //PARCHE: Solo entrara la primera vez que inice el juego con el texto.
                             if (firstTime) {
-                                result = LEDPattern.getPatternLetter(pov_text.charAt(index));
+                                result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
                                 firstTime = false;
                             }
 
@@ -229,66 +242,209 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
 
 
-        /*exec.schedule(new Runnable() {
-            @Override
+    private void startTimer(){
+        timer = new Timer();
+        timerTask = new TimerTask() {
             public void run() {
-                int y;
+                handler.post(new Runnable() {
+                    public void run(){
+                        int y;
 
-                Log.i("Running Task.. ", " YIKES");
+
+                        if (cont > 33) {
+                            setOffLeds();
+                            setOffLeds();
+                            setOffLeds();
+                            setOffLeds();
+                            /*for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }
+
+                            for (y = 0; y < 8; y++) {
+
+                                pixels[y].setOn(0);
+                            }*/
 
 
-                if (cont > 33) {
-                    for (y = 0; y < 8; y++) {
+                            cont = 0;
 
-                        pixels[y].setOn(0);
+
+                            Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(indexChar));
+
+                            //Aqui termina una letra completa, voy a la siguiente letra. Pero pregunto primero si
+                            //alcance el limite de la cadena de texto
+
+
+                            if (indexChar == pov_text.length() - 1 ) {
+                                indexChar = 0;
+                                if(contNumWordTimes == 100){ //TIME TO ADVANCE ANOTHER WORD
+                                    if(indexWord == splitted_pov_text.length - 1)
+                                        indexWord = 0;
+                                    else
+                                        indexWord = indexWord + 1;
+
+                                    contNumWordTimes = 0;
+                                    pov_text = splitted_pov_text[indexWord];
+                                    Log.i("OSCAR", "TERMINE TODA LA PALABRA - AVANZO CON "+pov_text);
+                                }
+
+                                contNumWordTimes = contNumWordTimes + 1;
+
+                            } else
+                                indexChar = indexChar + 1;
+
+                            result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
+
+                        } else {
+                            //PARCHE: Solo entrara la primera vez que inice el juego con el texto.
+                            if (firstTime) {
+                                pov_text = splitted_pov_text[indexWord];
+                                result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
+                                firstTime = false;
+                            }
+
+                            for (y = 0; y < 8; y++) {
+                                pixels[y].setOn(result[y + cont]);
+                            }
+
+                            cont = cont + 8;
+
+                            Log.i("OSCAR", "TERMINE PATRON: DEL " + cont);
+
+                        }
+
                     }
-
-                    cont = 0;
-
-                    Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(index));
-
-                    //Aqui termina una letra completa, voy a la siguiente letra. Pero pregunto primero si
-                    //alcance el limite de la cadena de texto
-
-                    try {
-                        Thread.sleep(2);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    if (index == pov_text.length() - 1) {
-                        index = 0;
-                        Log.i("OSCAR", "TERMINE TODA LA PALABRA");
-                    } else {
-                        index = index + 1;
-                    }
-
-
-                    result = LEDPattern.getPatternLetter(pov_text.charAt(index));
-
-                } else {
-                    //PARCHE: Solo entrara la primera vez que inice el juego con el texto.
-                    if (firstTime) {
-                        result = LEDPattern.getPatternLetter(pov_text.charAt(index));
-                        firstTime = false;
-                    }
-
-                    for (y = 0; y < 8; y++) {
-                        pixels[y].setOn(result[y + cont]);
-                    }
-
-                    cont = cont + 8;
-
-                    Log.i("OSCAR", "TERMINE PATRON: DEL " + cont);
-
-                }
-
+                });
             }
+        };
 
-        }, 2000, 500, TimeUnit.MILLISECONDS);*/
+        timer.schedule(timerTask, 2000, 16);
+
+    }
+
+    private void setOffLeds(){
+        for (int y = 0; y < 8; y++)
+            pixels[y].setOn(0);
+
+
+    }
+
+    private void arduinoCode(){
+        Thread t = new Thread (){
+
+            @Override
+            public void run(){
+                while (true){
+                    runOnUiThread(new Runnable(){
+
+                        @Override
+                        public void run(){
+                            int y;
+
+
+                            if (cont > 33) {
+                                for (y = 0; y < 8; y++) {
+
+                                    pixels[y].setOn(0);
+                                }
+
+                                cont = 0;
+
+                                Log.i("OSCAR", "TERMINE LA LETRA : " + pov_text.charAt(indexChar));
+
+                                //Aqui termina una letra completa, voy a la siguiente letra. Pero pregunto primero si
+                                //alcance el limite de la cadena de texto
+
+
+                                try {
+                                    Thread.sleep(6);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (indexChar == pov_text.length() - 1) {
+                                    indexChar = 0;
+                                    Log.i("OSCAR", "TERMINE TODA LA PALABRA");
+                                } else {
+                                    indexChar = indexChar + 1;
+                                }
+
+
+                                result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
+
+                            } else {
+                                //PARCHE: Solo entrara la primera vez que inice el juego con el texto.
+                                if (firstTime) {
+                                    result = LEDPattern.getPatternLetter(pov_text.charAt(indexChar));
+                                    firstTime = false;
+                                }
+
+                                for (y = 0; y < 8; y++) {
+                                    pixels[y].setOn(result[y + cont]);
+                                }
+
+                                cont = cont + 8;
+
+                                try {
+                                    Thread.sleep(1);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Log.i("OSCAR", "TERMINE PATRON: DEL " + cont);
+
+                            }
+                        }
+
+                    });
+                }
+            }
+        };
+        t.start();
 
     }
 }
